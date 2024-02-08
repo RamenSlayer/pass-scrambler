@@ -1,2 +1,2 @@
 # pass-scrambler
-Scrambles input string t ouse as password. Rates the output results by strength.
+Scrambles input string to use as password. Rates the output results by strength.
