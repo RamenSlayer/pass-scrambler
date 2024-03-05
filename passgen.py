@@ -1,6 +1,5 @@
 from passwordstrength.passwordmeter import PasswordStrength
 from passwordstrength.entropy import Entropy
-from math import log2
 
 from zxcvbn import zxcvbn
 
@@ -131,7 +130,6 @@ def randomizer(pwd: str)->str:
                 newpwd += letter(sym)
     return newpwd
 
-
 def Swchr(pwd: str)->str:
     newpwd = ""
     for sym in pwd:
@@ -150,15 +148,18 @@ def Swchr(pwd: str)->str:
     return newpwd
 
 
-
 inpwd = input("Password to randomize:\n> ")
-iterations = input("How many times to iterate (blank = 1):\n> ")
+iterations = input("How many times to iterate (default = 128):\n> ")
 method = input("Method 0 or 1 (default 0)\n> ")
 
 if iterations is None or iterations == '':
-    iterations = 1
+    iterations = 128
 else:
-    iterations = int(iterations) - 1
+    try:
+        iterations = int(iterations) - 1
+    except:
+        print(" ! Failed input, defaulting to 128")
+        iterations = 128
 
 passwords = []
 if method != '1':
@@ -179,7 +180,8 @@ try:
     for pwd in passwords:
         ranked_pwds.append((mesentropy(pwd), messtrength(pwd), pwd))
 except:
-    print("Entropy measure failed for whatever reason beyond my control or comprehension\n", "Falling back to strength measure")
+    print(" ! Entropy measure failed for whatever reason beyond my control or comprehension\n",
+          " ! Falling back to strength measure")
     for pwd in passwords:
         ranked_pwds.append((messtrength(pwd), pwd))
-print(*sorted(ranked_pwds), sep = '\n')
+print(*sorted(ranked_pwds), sep='\n')
