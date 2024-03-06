@@ -259,7 +259,7 @@ ranked_pwds = []
 
 try:
     for pwd in passwords:
-        ranked_pwds.append((mesentropy(pwd), messtrength(pwd), pwd))
+        ranked_pwds.append((messtrength(pwd), mesentropy(pwd), pwd))
 except:
     print(" ! Entropy measure failed for reasons beyond my comprehension\n",
           " ! Falling back to strength measure", sep="")
