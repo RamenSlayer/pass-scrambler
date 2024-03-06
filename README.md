@@ -10,5 +10,7 @@ Either run `pip install -r requirements.txt` in the directory of the project (if
 
 ---
 
-## TODO:
+## TODO
 Done all I wanted to so no idea anymore B)
+
+Actually maybe rewrite the legacy method or think of some simplifications
