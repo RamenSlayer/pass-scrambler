@@ -1,13 +1,51 @@
 from passwordstrength.passwordmeter import PasswordStrength
-from passwordstrength.entropy import Entropy
-
 from zxcvbn import zxcvbn
 
 from random import random
 from random import choice
 
+from argparse import ArgumentParser as argparser
 
-entropy = Entropy()
+from warnings import warn
+
+help_text = """
+Generates a number of passwords from input by randomly switching characters to visually similar characters
+"""
+
+parser = argparser(description=help_text)
+parser.add_argument("-e",
+                    "--explicit",
+                    dest="exp",
+                    action="store_true",
+                    help="Calls a menu to fill in options.")
+parser.add_argument("-n",
+                    "--number",
+                    dest="num",
+                    type=int,
+                    default=128,
+                    help="Number of generations")
+parser.add_argument("-l",
+                    "--lines",
+                    dest="lines",
+                    type=int,
+                    help="Number of best password to print (all by default)")
+parser.add_argument("-f",
+                    "--friendly",
+                    dest="friendly",
+                    action="store_true",
+                    help="Don't use symbols")
+parser.add_argument("--not-recursive",
+                    dest="recursive",
+                    action="store_false",
+                    help="Randomize non recursively. Less safe.")
+parser.add_argument("-s",
+                    "--strip",
+                    dest="strip",
+                    action="store_true",
+                    help="Only prints passwords without strength measure")
+parser.add_argument("password", nargs="*")
+args = parser.parse_args()
+
 
 def messtrength(s: str)->float:
     return PasswordStrength(s).strength()
@@ -30,6 +68,7 @@ l2n = {
        's' : '5',
        'z' : '2',
       }
+
 n2l = {
       '1' : ('i', 'l', 'I', 'L'),
       '2' : ('z', 'Z'),
@@ -96,14 +135,14 @@ def switch_cap(l: str)->str:
         return l.upper()
     return l.lower()
 
-def letter(l: str)->str:
+def letter_op(l: str)->str:
     r = random()
     if r <= 1/2:
         return switch_cap(l)
     elif r <= 2/2:
         return l2n_f(l)
 
-def number(n: str)->str:
+def number_op(n: str)->str:
     r = random()
     if r <= 1/1:
         return n2l_f(n)
@@ -125,9 +164,9 @@ def randomizer(pwd: str)->str:
             newpwd += sym
         elif r <= 2/2:
             if sym in numbers:
-                newpwd += number(sym)
+                newpwd += number_op(sym)
             elif sym.lower() in letters:
-                newpwd += letter(sym)
+                newpwd += letter_op(sym)
     return newpwd
 
 def Swchr(pwd: str)->str:
@@ -148,40 +187,89 @@ def Swchr(pwd: str)->str:
     return newpwd
 
 
-inpwd = input("Password to randomize:\n> ")
-iterations = input("How many times to iterate (default = 128):\n> ")
-method = input("Method 0 or 1 (default 0)\n> ")
-
-if iterations is None or iterations == '':
-    iterations = 128
+if args.exp:
+    inpwd = input("Password to randomize:\n> ")
+    if inpwd == "":
+        raise Exception("A password is required")
+    number = input("How many passwords to generate (default = 128):\n> ")
+    if number == '':
+        numbes = 128
+    else:
+        try:
+            number = int(number)
+        except:
+            print(" ! Failed input, defaulting to 128")
+            number = 128
+    lines = input("Number of best password to print (default = all)\n> ")
+    if lines == "":
+        lines = number
+    else:
+        try:
+            lines = int(lines)
+        except:
+            print(" ! Input wasn't an integer",
+                  " ! Defaulting to all", sep="\n")
+            lines = number
+    if lines > number:
+        warn("Print more lines than passwords generated. Will break print")
+    friendly = input("(y) for friendly\n> ")
+    friendly = friendly.lower() == 'y'
+    strip = input("(y) to strip additional data from passwords\n> ")
+    strip = strip.lower() == 'y'
+    recursive = input("(n) to generate non recursively\n ")
+    recursive = recursive.lower() != 'n'
 else:
-    try:
-        iterations = int(iterations) - 1
-    except:
-        print(" ! Failed input, defaulting to 128")
-        iterations = 128
+    inpwd = " ".join(args.password)
+    if inpwd == "":
+        raise Exception("A password is required")
+    number = args.num
+    friendly = args.friendly
+    if args.lines is None:
+        lines = number
+    else:
+        lines = args.lines
+    if lines > number:
+        warn("Print more lines than passwords generated. Will break print")
+    friendly = args.friendly
+    strip = args.strip
+    recursive = args.recursive
+
 
 passwords = []
-if method != '1':
+if not friendly:
     newpwd = Swchr(inpwd)
     passwords.append(newpwd)
-    for i in range(iterations):
-        newpwd = Swchr(newpwd)
+    for i in range(number - 1):
+        if recursive:
+            newpwd = Swchr(newpwd)
+        else:
+            newpwd = Swchr(inpwd)
         passwords.append(newpwd)
 else:
     newpwd = randomizer(inpwd)
     passwords.append(newpwd)
-    for i in range(iterations - 1):
-        newpwd = randomizer(newpwd)
+    for i in range(number - 1):
+        if recursive:
+            newpwd = randomizer(newpwd)
+        else:
+            newpwd = randomizer(inpwd)
         passwords.append(newpwd)
+
 ranked_pwds = []
 
 try:
     for pwd in passwords:
         ranked_pwds.append((mesentropy(pwd), messtrength(pwd), pwd))
 except:
-    print(" ! Entropy measure failed for whatever reason beyond my control or comprehension\n",
-          " ! Falling back to strength measure")
+    print(" ! Entropy measure failed for reasons beyond my comprehension\n",
+          " ! Falling back to strength measure", sep="")
+    ranked_pwds = []
     for pwd in passwords:
         ranked_pwds.append((messtrength(pwd), pwd))
-print(*sorted(ranked_pwds), sep='\n')
+
+if strip:
+    for outpass in sorted(ranked_pwds)[len(ranked_pwds) - lines:]:
+        print(outpass[-1])
+else:
+    for outpass in sorted(ranked_pwds)[len(ranked_pwds) - lines:]:
+        print(outpass)
