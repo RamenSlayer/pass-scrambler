@@ -193,12 +193,12 @@ if args.exp:
         raise Exception("A password is required")
     number = input("How many passwords to generate (default = 128):\n> ")
     if number == '':
-        numbes = 128
+        number = 128
     else:
         try:
             number = int(number)
         except:
-            print(" ! Failed input, defaulting to 128")
+            warn(" ! Failed input, defaulting to 128")
             number = 128
     lines = input("Number of best password to print (default = all)\n> ")
     if lines == "":
@@ -207,8 +207,7 @@ if args.exp:
         try:
             lines = int(lines)
         except:
-            print(" ! Input wasn't an integer",
-                  " ! Defaulting to all", sep="\n")
+            warn(" ! Input wasn't an integer\n ! Defaulting to all")
             lines = number
     if lines > number:
         warn("Print more lines than passwords generated. Will break print")
@@ -216,7 +215,7 @@ if args.exp:
     friendly = friendly.lower() == 'y'
     strip = input("(y) to strip additional data from passwords\n> ")
     strip = strip.lower() == 'y'
-    recursive = input("(n) to generate non recursively\n ")
+    recursive = input("(n) to generate non recursively\n> ")
     recursive = recursive.lower() != 'n'
 else:
     inpwd = " ".join(args.password)
