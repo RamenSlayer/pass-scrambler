@@ -1,3 +1,5 @@
+#!/bin/python
+
 from passwordstrength.passwordmeter import PasswordStrength
 from zxcvbn import zxcvbn
 
@@ -228,7 +230,7 @@ else:
     else:
         lines = args.lines
     if lines > number:
-        warn("Print more lines than passwords generated. Will break print")
+        warn(" ! Print more lines than passwords generated. Will break print")
     friendly = args.friendly
     strip = args.strip
     recursive = args.recursive
@@ -260,8 +262,7 @@ try:
     for pwd in passwords:
         ranked_pwds.append((messtrength(pwd), mesentropy(pwd), pwd))
 except:
-    print(" ! Entropy measure failed for reasons beyond my comprehension\n",
-          " ! Falling back to strength measure", sep="")
+    warn(" ! Entropy measure failed\n ! Falling back to strength measure")
     ranked_pwds = []
     for pwd in passwords:
         ranked_pwds.append((messtrength(pwd), pwd))
