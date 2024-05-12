@@ -49,116 +49,113 @@ parser.add_argument("password", nargs="*")
 args = parser.parse_args()
 
 
-def messtrength(s: str)->float:
+def messtrength(s: str) -> float:
     return PasswordStrength(s).strength()
 
-def mesentropy(s: str)->float:
+
+def mesentropy(s: str) -> float:
     # global entropy
     # return math.log2(entropy.entropy(s))
     return zxcvbn(s)['score']
 
+
 l2n = {
-       'a' : '4',
-       'b' : '6',
-       'e' : '3',
-       'g' : '6',
-       'h' : '4',
-       'i' : '1',
-       't' : '7',
-       'l' : '1',
-       'o' : '0',
-       's' : '5',
-       'z' : '2',
+       'a': '4',
+       'b': '6',
+       'e': '3',
+       'g': '6',
+       'h': '4',
+       'i': '1',
+       't': '7',
+       'l': '1',
+       'o': '0',
+       's': '5',
+       'z': '2',
       }
 
 n2l = {
-      '1' : ('i', 'l', 'I', 'L'),
-      '2' : ('z', 'Z'),
-      '3' : ('e', 'E'),
-      '4' : ('H', 'h', 'a', 'A'),
-      '5' : ('s', 'S'),
-      '6' : ('g', 'G'),
-      '7' : ('t', 'T'),
-      '0' : ('o', 'O'),
+      '1': ('i', 'l', 'I', 'L'),
+      '2': ('z', 'Z'),
+      '3': ('e', 'E'),
+      '4': ('H', 'h', 'a', 'A'),
+      '5': ('s', 'S'),
+      '6': ('g', 'G'),
+      '7': ('t', 'T'),
+      '0': ('o', 'O'),
       }
 
 smatch = {
-          'a' : ('4', '@', 'A', 'a'),
-          'b' : ('6', '8', 'b', 'B'),
-          'c' : ('<', 'c', 'C'),
-          'd' : ('0', 'd', 'D'),
-          'e' : ('3', 'e', 'E'),
-          'g' : ('6', '9', 'g', 'G'),
-          'h' : ('4', '#', 'h', 'H'),
-          'i' : ('1', '!', '|', 'i', 'I'),
-          't' : ('7', 't', 'T',),
-          'l' : ('1', '|', 'l', 'L'),
-          'o' : ('0', 'o', 'O'),
-          's' : ('5', 's', 'S', '$'),
-          'z' : ('2', 'z', 'Z'),
-          '1' : ('i', 'l', 'I', 'L', '!', '|', '1'),
-          '2' : ('z', 'Z', '2'),
-          '3' : ('e', 'E', '3'),
-          '4' : ('H', 'h', 'a', 'A', '4'),
-          '5' : ('s', 'S', '5'),
-          '6' : ('g', 'G', 'b', 'B', '6'),
-          '7' : ('t', 'T', '7'),
-          '8' : ('&', 'b', 'B', '8'),
-          '9' : ('g', 'G', '9'),
-          '0' : ('o', 'O', '0', 'D'),
-          '$' : ('s', 'S', '$'),
-          '#' : ('h', 'H', '#'),
-          '<' : ('c', 'C', '<'),
-          '&' : ('8', 'b', 'B', '&'),
-          '!' : ('i', 'I', '!', '|', '1'),
-          '|' : ('i', 'I', '!', '|', '1', 'l', 'L'),
-          '@' : ('a', 'A')
+          'a': ('4', '@', 'A', 'a'),
+          'b': ('6', '8', 'b', 'B'),
+          'c': ('<', 'c', 'C'),
+          'd': ('0', 'd', 'D'),
+          'e': ('3', 'e', 'E'),
+          'g': ('6', '9', 'g', 'G'),
+          'h': ('4', '#', 'h', 'H'),
+          'i': ('1', '!', '|', 'i', 'I'),
+          't': ('7', 't', 'T',),
+          'l': ('1', '|', 'l', 'L'),
+          'o': ('0', 'o', 'O'),
+          's': ('5', 's', 'S', '$'),
+          'z': ('2', 'z', 'Z'),
+          '1': ('i', 'l', 'I', 'L', '!', '|', '1'),
+          '2': ('z', 'Z', '2'),
+          '3': ('e', 'E', '3'),
+          '4': ('H', 'h', 'a', 'A', '4'),
+          '5': ('s', 'S', '5'),
+          '6': ('g', 'G', 'b', 'B', '6'),
+          '7': ('t', 'T', '7'),
+          '8': ('&', 'b', 'B', '8'),
+          '9': ('g', 'G', '9'),
+          '0': ('o', 'O', '0', 'D'),
+          '$': ('s', 'S', '$'),
+          '#': ('h', 'H', '#'),
+          '<': ('c', 'C', '<'),
+          '&': ('8', 'b', 'B', '&'),
+          '!': ('i', 'I', '!', '|', '1'),
+          '|': ('i', 'I', '!', '|', '1', 'l', 'L'),
+          '@': ('a', 'A')
          }
 
-# l2s = {
-#       'q' : ('o|', '0|', 'O|', '*|'),
-#       'w' : ('VV', 'vv'),
-#       'e' :
-#       }
 
-def l2n_f(l: str)->str:
-    l = l.lower()
-    if l in l2n.keys():
-        return l2n[l]
-    return l
+def l2n_f(letter: str) -> str:
+    letter = letter.lower()
+    if letter in l2n.keys():
+        return l2n[letter]
+    return letter
 
-def n2l_f(n: str)->str:
-    if n in n2l.keys():
-        return choice(n2l[n])
-    return n
 
-def switch_cap(l: str)->str:
-    if l.lower() == l:
-        return l.upper()
-    return l.lower()
+def n2l_f(number: str) -> str:
+    if number in n2l.keys():
+        return choice(n2l[number])
+    return number
 
-def letter_op(l: str)->str:
+
+def switch_cap(letter: str) -> str:
+    if letter.lower() == letter:
+        return letter.upper()
+    return letter.lower()
+
+
+def letter_op(letter: str) -> str:
     r = random()
     if r <= 1/2:
-        return switch_cap(l)
+        return switch_cap(letter)
     elif r <= 2/2:
-        return l2n_f(l)
+        return l2n_f(letter)
 
-def number_op(n: str)->str:
+
+def number_op(number: str) -> str:
     r = random()
     if r <= 1/1:
-        return n2l_f(n)
+        return n2l_f(number)
 
-# def uni(str:u)->str:
-#     r = random()
-#     if r <= 1/2:
-#         return u * 2
-#     elif r <= 2/2
 
 numbers = "1234567890"
 letters = 'qwertyuiopasdfghjklzxcvbnm'
 
-def randomizer(pwd: str)->str:
+
+def randomizer(pwd: str) -> str:
     newpwd = str()
     for sym in pwd:
         r = random()
@@ -171,7 +168,8 @@ def randomizer(pwd: str)->str:
                 newpwd += letter_op(sym)
     return newpwd
 
-def Swchr(pwd: str)->str:
+
+def Swchr(pwd: str) -> str:
     newpwd = ""
     for sym in pwd:
         if sym.lower() in smatch.keys():
