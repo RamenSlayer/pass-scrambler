@@ -24,7 +24,7 @@ parser.add_argument("-n",
                     "--number",
                     dest="num",
                     type=int,
-                    default=128,
+                    default=1024,
                     help="Number of generations")
 parser.add_argument("-l",
                     "--lines",
@@ -39,7 +39,7 @@ parser.add_argument("-f",
 parser.add_argument("--not-recursive",
                     dest="recursive",
                     action="store_false",
-                    help="Randomize non recursively. Less safe.")
+                    help="Randomize non recursively.")
 parser.add_argument("-s",
                     "--strip",
                     dest="strip",
@@ -187,7 +187,7 @@ def Swchr(pwd: str) -> str:
     return newpwd
 
 
-if args.exp:
+if args.exp or len(args.password) == 0:
     inpwd = input("Password to randomize:\n> ")
     if inpwd == "":
         raise Exception("A password is required")
