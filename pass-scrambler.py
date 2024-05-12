@@ -45,6 +45,11 @@ parser.add_argument("-s",
                     dest="strip",
                     action="store_true",
                     help="Only prints passwords without strength measure")
+parser.add_argument("-p",
+                    "--private",
+                    dest="private",
+                    action="store_true",
+                    help="Read arguments and enter password explicitly")
 parser.add_argument("password", nargs="*")
 args = parser.parse_args()
 
@@ -187,13 +192,13 @@ def Swchr(pwd: str) -> str:
     return newpwd
 
 
-if args.exp or len(args.password) == 0:
+if args.exp or (len(args.password) == 0 and not args.private):
     inpwd = input("Password to randomize:\n> ")
     if inpwd == "":
         raise Exception("A password is required")
-    number = input("How many passwords to generate (default = 128):\n> ")
+    number = input("How many passwords to generate (default = 1024):\n> ")
     if number == '':
-        number = 128
+        number = 1024
     else:
         try:
             number = int(number)
@@ -218,9 +223,6 @@ if args.exp or len(args.password) == 0:
     recursive = input("(n) to generate non recursively\n> ")
     recursive = recursive.lower() != 'n'
 else:
-    inpwd = " ".join(args.password)
-    if inpwd == "":
-        raise Exception("A password is required")
     number = args.num
     friendly = args.friendly
     if args.lines is None:
@@ -232,6 +234,13 @@ else:
     friendly = args.friendly
     strip = args.strip
     recursive = args.recursive
+    inpwd = ""
+    if args.private:
+        inpwd = input()
+    else:
+        inpwd = " ".join(args.password)
+    if inpwd == "":
+        raise Exception("A password is required")
 
 
 passwords = []
