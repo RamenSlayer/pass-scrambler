@@ -13,6 +13,6 @@ Either run `pip install -r requirements.txt` in the directory of the project (if
 ## TODO
 
 - [ ] Move to function, take arguments
-- [ ] Add option to only input string in interactive mode, the rest in command
+- [x] Add option to only input string in interactive mode, the rest in command
 - [ ] Add "interactive by default" instead of requiring an argument to go interactive.
 - [ ] MAYBE rewrite the legacy method or think of some simplifications
